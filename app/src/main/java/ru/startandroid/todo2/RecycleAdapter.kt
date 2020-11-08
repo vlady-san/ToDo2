@@ -7,17 +7,14 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.subjects.PublishSubject
 import ru.startandroid.todo.Task.Task
 import ru.startandroid.todo.extensions.inflate
 import ru.startandroid.todo2.R
-import java.util.*
 import kotlin.collections.ArrayList
 
-class RecyclerAdapter(private val tasks: List<Task>)  : RecyclerView.Adapter<RecyclerAdapter.TaskHolder>()  {
+class RecyclerAdapter()  : RecyclerView.Adapter<RecyclerAdapter.TaskHolder>()  {
 
-//    private val clickSubject = PublishSubject.create<Task>()
-//    val clickEvent: Observable<Task> = clickSubject
+    private var tasks: List<Task> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
         return TaskHolder(parent.inflate(R.layout.recyclerview_item_row))
@@ -31,17 +28,20 @@ class RecyclerAdapter(private val tasks: List<Task>)  : RecyclerView.Adapter<Rec
         holder.bind(tasks[position]);
     }
 
+    fun refreshTasks(newTask: List<Task>) {
+        tasks=newTask
+        notifyDataSetChanged()
+
+    }
+
     inner class TaskHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
         //2
         private var view: View = v
         private var textOfTask: TextView? = null
-        private val clickSubject = PublishSubject.create<List<Task>>()
 
         //3
         init {
-            view.setOnClickListener {
-                //clickSubject.onNext (tasks[layoutPosition])
-            }
+           view.setOnClickListener(this)
             textOfTask = v?.findViewById(R.id.task_text)
         }
 

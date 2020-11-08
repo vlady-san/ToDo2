@@ -5,27 +5,29 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_first.*
 import ru.startandroid.todo.RecyclerAdapter
-import ru.startandroid.todo.Task.Task
-import ru.startandroid.todo.TasksDataBase
+import ru.startandroid.todo2.Task.TaskViewModelFactory
+import ru.startandroid.todo2.Task.TasksViewModel
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class FirstFragment : Fragment() {
-    private var subscribe: Disposable?=null
+    private val taskViewModel by lazy {
+        ViewModelProvider(this, TaskViewModelFactory(context)).get(
+            TasksViewModel::class.java
+        )
+    }
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var recyclerAdapter: RecyclerAdapter
-    private var db: TasksDataBase? = null
+
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_first, container, false)
@@ -33,28 +35,17 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        db = activity?.let { TasksDataBase.getDatabase(context = it) }
 
         linearLayoutManager = LinearLayoutManager(activity)
         recyclerView.layoutManager = linearLayoutManager
 
-        var tasks = db?.taskDao()?.getAllTasks()
-        recyclerAdapter= RecyclerAdapter(tasks as ArrayList<Task>)
+        recyclerAdapter = RecyclerAdapter()
         recyclerView.adapter = recyclerAdapter
 
-        //subscribe=recyclerAdapter.clickEvent.subscribe{
-
-        //}
-//        fab.setOnClickListener {
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var tasks = db?.taskDao()?.getAllTasks()
-        recyclerAdapter= RecyclerAdapter(tasks as ArrayList<Task>)
-        recyclerAdapter.notifyDataSetChanged()
-
+        taskViewModel.getListTasks().observe(viewLifecycleOwner, Observer {
+            it?.let {
+                recyclerAdapter.refreshTasks(it)
+            }
+        })
     }
 }

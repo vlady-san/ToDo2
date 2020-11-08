@@ -19,8 +19,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-
-
         var bundle = bundleOf("isSave" to 1)
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
              findNavController(

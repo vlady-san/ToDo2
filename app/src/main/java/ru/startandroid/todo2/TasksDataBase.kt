@@ -28,7 +28,7 @@ public abstract class TasksDataBase : RoomDatabase() {
                     context.applicationContext,
                     TasksDataBase::class.java,
                     "word_database"
-                ).allowMainThreadQueries().build()
+                ).build()
                 INSTANCE = instance
                 return instance
             }

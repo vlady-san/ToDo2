@@ -6,14 +6,11 @@ import androidx.room.*
 interface TaskDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(task: Task)
+    suspend fun insert(task: Task)
 
     @Delete
-    fun delete(task: Task)
+    suspend fun delete(task: Task)
 
     @Query("SELECT * from tasks")
-    fun getAllTasks(): List<Task>
-
-    @Query("SELECT COUNT(*) from tasks")
-    fun getSize(): Int
+    suspend fun getAllTasks(): List<Task>
 }
