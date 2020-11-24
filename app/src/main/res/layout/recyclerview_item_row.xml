@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="33dp"
+    android:layout_height="wrap_content"
+    android:maxHeight="70dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginBottom="8dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="20dp"
     android:orientation="vertical"
 
     >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/complete"
+        />
 
     <TextView
         android:id="@+id/task_text"
@@ -15,6 +26,15 @@
         android:text="дддд"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp" />
+        android:layout_toRightOf="@+id/complete"
+        android:padding="8dp" />
+        <TextView
+            android:padding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/task_text"
+            android:layout_alignStart="@+id/task_text"
+            android:id="@+id/dateString"/>
+    </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

@@ -3,30 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/fragment_first">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/fragment_first"
         android:name="ru.startandroid.todo2.FirstFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/fragment_second" />
+        <action
+            android:id="@+id/action_fragment_first_self"
+            app:destination="@id/fragment_first" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
+        android:id="@+id/fragment_second"
         android:name="ru.startandroid.todo2.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            app:destination="@id/fragment_first" />
         <argument
-            android:name="isSave"
+            android:name="id"
             app:argType="integer"
-            android:defaultValue="1" />
+            android:defaultValue="-1" />
     </fragment>
 </navigation>

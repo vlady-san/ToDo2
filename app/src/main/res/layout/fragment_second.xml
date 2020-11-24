@@ -1,31 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_margin="16dp"
     tools:context=".SecondFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp">
-    <RadioButton android:id="@+id/java"
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:id="@+id/complete"
+        android:layout_marginTop="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_toRightOf="@+id/complete"
+        android:layout_width="match_parent"
+        android:hint="Введите название задачи"
+        android:layout_height="50dp"
+        android:layout_margin="16dp"
+        android:id="@+id/et_task_name"/>
+    <com.google.android.material.textfield.TextInputEditText
+        android:hint="Введите описание задачи"
+        android:layout_toRightOf="@+id/complete"
+        android:layout_below="@+id/et_task_name"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_margin="16dp"
-        android:id="@+id/et_task"/>
-    </LinearLayout>
-    <Button
+        android:id="@+id/et_task_description"/>
+
+    <ImageButton
+        android:src="@drawable/date"
+        android:id="@+id/date"
+        android:layout_below="@+id/et_task_description"
+        android:layout_alignStart="@+id/et_task_name"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_width="wrap_content" />
+
+    <ImageButton
+        android:id="@+id/time"
+        android:layout_margin="8dp"
         android:layout_width="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_task_description"
+        android:layout_toEndOf="@+id/date"
+        android:src="@drawable/time"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Сохранить"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:id="@+id/btn"/>
 
-</LinearLayout>
+</RelativeLayout>
