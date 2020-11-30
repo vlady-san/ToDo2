@@ -23,4 +23,8 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE date BETWEEN :dateFrom and :dateTo")
     @TypeConverters(DateConverter::class)
     suspend fun getByDate( dateFrom: Date, dateTo : Date): List<Task>
+
+
+
+
 }

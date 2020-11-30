@@ -9,19 +9,23 @@ import kotlinx.coroutines.launch
 import ru.startandroid.todo.Task.Task
 import ru.startandroid.todo.Task.TaskDao
 import ru.startandroid.todo.TasksDataBase
+import ru.startandroid.todo2.SubTask.SubTask
+import ru.startandroid.todo2.SubTask.SubTaskDao
 import java.util.*
 
 class TasksViewModel(context: Context) : ViewModel() {
     private var db: TasksDataBase? = null
-    private var genderDao: TaskDao? = null
+    private var taskDao: TaskDao? = null
+    private var subTaskDao: SubTaskDao?=null
     var taskList : MutableLiveData<List<Task>> = MutableLiveData()
+    var subTaskList : MutableLiveData<List<SubTask>> = MutableLiveData()
 
     init {
         Log.d("MyLog", "init")
         db = TasksDataBase.getDatabase(context)
-        genderDao = db?.taskDao()
+        taskDao = db?.taskDao()
         GlobalScope.launch {
-        taskList.postValue(genderDao?.getAllTasks())
+        taskList.postValue(taskDao?.getAllTasks())
             Log.d("MyLog", "load")
         }
     }
@@ -31,23 +35,23 @@ class TasksViewModel(context: Context) : ViewModel() {
     }
 
     suspend fun getTaskById(id: Int): Task? {
-        return genderDao?.getTaskById(id)
+        return taskDao?.getTaskById(id)
     }
 
     fun updateListTasks() {
         GlobalScope.launch {
-            taskList.postValue(genderDao?.getAllTasks())
+            taskList.postValue(taskDao?.getAllTasks())
         }
     }
 
     fun updateNameTask(id: Int, newTask: Task){
         GlobalScope.launch {
-            var task = genderDao?.getTaskById(id)
+            var task = taskDao?.getTaskById(id)
             if (task != null) {
                 task.name = newTask.name
                 task.description=newTask.description
                 task.date=newTask.date
-                with(genderDao) {
+                with(taskDao) {
                     this?.insert(task)
                 }
             }
@@ -56,17 +60,17 @@ class TasksViewModel(context: Context) : ViewModel() {
 
     fun setDateForTask(date: Calendar, id: Int){
         GlobalScope.launch {
-            var task= genderDao?.getTaskById(id)
+            var task= taskDao?.getTaskById(id)
             if (task != null) {
                 task.date=date.time.time
-                genderDao?.insert(task)
+                taskDao?.insert(task)
             }
         }
     }
 
     fun insertTask(task: Task){
         GlobalScope.launch {
-        with(genderDao) {
+        with(taskDao) {
             this?.insert(task)
         }
         }
@@ -74,8 +78,8 @@ class TasksViewModel(context: Context) : ViewModel() {
 
     fun deleteTask(id: Int) {
         GlobalScope.launch {
-            genderDao?.deleteById(id)
-            println(genderDao?.getAllTasks()?.size.toString())
+            taskDao?.deleteById(id)
+            println(taskDao?.getAllTasks()?.size.toString())
         }
         //updateListTasks()
     }
@@ -87,7 +91,7 @@ class TasksViewModel(context: Context) : ViewModel() {
 
         GlobalScope.launch {
 
-            taskList.postValue(genderDao?.getByDate(dateFrom.time,dateTo.time))
+            taskList.postValue(taskDao?.getByDate(dateFrom.time,dateTo.time))
         }
     }
 
