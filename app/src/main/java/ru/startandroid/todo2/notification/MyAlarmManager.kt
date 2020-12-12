@@ -5,26 +5,26 @@ import android.content.Context
 class MyAlarmManager(context: Context) {
     private var alarm: AlarmManagerBroadcastReceiver =
         AlarmManagerBroadcastReceiver()
-    private val mContext = context
+    private var mContext = context
 
     fun startRepeatingTimer(text: String) {
-        val context: Context = mContext
+        var context: Context = mContext
         if (alarm != null) {
             alarm.setAlarm(context,text)
         }
     }
 
-    fun cancelRepeatingTimer() {
-        val context: Context = mContext
+    fun cancelTimer() {
+        var context: Context = mContext
         if (alarm != null) {
             alarm.cancelAlarm(context)
         }
     }
 
-    fun onetimeTimer(text: String) {
-        val context: Context = mContext
+    fun onetimeTimer(text: String, time : Long) {
+        var context: Context = mContext
         if (alarm != null) {
-            alarm.setOnetimeTimer(context,text)
+            alarm.setOnetimeTimer(context,text, time)
         }
     }
 }

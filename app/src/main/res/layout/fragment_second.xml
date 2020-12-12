@@ -65,6 +65,7 @@
             android:layout_marginTop="8dp"
             android:id="@+id/add_sub_task"
             android:layout_width="wrap_content"
+            android:backgroundTint="@color/buttom"
             android:layout_height="wrap_content"
             android:layout_below="@+id/sub_task_recyclerView"
             android:text="Добавить подзадачу"/>
@@ -83,6 +84,7 @@
         android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:backgroundTint="@color/buttom"
         android:text="Сохранить"
         android:layout_below="@+id/sub_task_rl"
         android:layout_alignParentRight="true"

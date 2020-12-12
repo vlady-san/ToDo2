@@ -16,10 +16,7 @@ import java.util.*
 class TasksViewModel(context: Context) : ViewModel() {
     private var db: TasksDataBase? = null
     private var taskDao: TaskDao? = null
-    private var subTaskDao: SubTaskDao?=null
     var taskList : MutableLiveData<List<Task>> = MutableLiveData()
-    var subTaskList : MutableLiveData<List<SubTask>> = MutableLiveData()
-
     init {
         Log.d("MyLog", "init")
         db = TasksDataBase.getDatabase(context)
@@ -52,7 +49,7 @@ class TasksViewModel(context: Context) : ViewModel() {
                 task.description=newTask.description
                 task.date=newTask.date
                 with(taskDao) {
-                    this?.insert(task)
+                    this?.update(task)
                 }
             }
         }
@@ -88,10 +85,12 @@ class TasksViewModel(context: Context) : ViewModel() {
         var dateTo=Calendar.getInstance()
         dateTo.time=dateFrom.time
         dateTo.add(Calendar.DAY_OF_MONTH,1)
+        System.out.println(dateTo.time.toString())
 
         GlobalScope.launch {
-
+            System.out.println(taskDao?.getByDate(dateFrom.time,dateTo.time)?.size)
             taskList.postValue(taskDao?.getByDate(dateFrom.time,dateTo.time))
+
         }
     }
 

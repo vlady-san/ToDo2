@@ -32,6 +32,7 @@ class SubTaskViewModel(application: Application, idTask: Int) : AndroidViewModel
     fun updateListUsers() {
         GlobalScope.launch {
             subTaskList.postValue(subTaskDao?.getByIdUser(mIdTask))
+            System.out.println("кол саб "+mIdTask+" "+ (subTaskDao?.getByIdUser(mIdTask)?.size))
         }
     }
 

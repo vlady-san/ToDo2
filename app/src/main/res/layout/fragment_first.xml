@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
+        app:backgroundTint="@color/buttom"
         app:layout_anchor="@id/bottomAppBar"
         app:srcCompat="@android:drawable/ic_menu_add"/>
 
@@ -32,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/bottomToolbar"
         app:fabCradleMargin="4dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

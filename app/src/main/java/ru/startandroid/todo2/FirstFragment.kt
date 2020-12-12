@@ -48,15 +48,7 @@ class FirstFragment : Fragment(), ActionListener {
         super.onViewCreated(view, savedInstanceState)
 
         //сортировка по дате
-        var dateStr=arguments?.getString("date")
-        if(dateStr!=null){
-            System.out.println("!!!")
-            val dateFormat = SimpleDateFormat("dd/MM/yy")
-            val date = dateFormat.parse(dateStr)
-            val cal = Calendar.getInstance()
-            cal.time = date
-            getTaskByDate(cal)
-        }
+
 
         //добавление задачи
         view.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
@@ -80,6 +72,17 @@ class FirstFragment : Fragment(), ActionListener {
                 recyclerAdapter.refreshTasks(it)
             }
         })
+
+        var dateStr=arguments?.getString("date")
+        if(dateStr!=null){
+            System.out.println("!!!")
+            val dateFormat = SimpleDateFormat("dd/MM/yy")
+            val date = dateFormat.parse(dateStr)
+            System.out.println(date.toString())
+            val cal = Calendar.getInstance()
+            cal.time = date
+            getTaskByDate(cal)
+        }
 
 
     }

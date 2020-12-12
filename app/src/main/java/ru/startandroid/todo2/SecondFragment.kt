@@ -1,21 +1,20 @@
 package ru.startandroid.todo2
 
-import android.app.*
+import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ScrollView
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_second.*
+import kotlinx.android.synthetic.main.sub_task_add_dialog.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.startandroid.todo.Task.Task
@@ -54,6 +54,7 @@ class SecondFragment : Fragment(), ActionListener {
     private var mId: Int = -1
     private var dateAndTime: Calendar = Calendar.getInstance()
     private var mcontext: Context?=null
+    private var am:MyAlarmManager?=null
 
 
 
@@ -67,24 +68,28 @@ class SecondFragment : Fragment(), ActionListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        am= MyAlarmManager(requireContext())
 
 
         // установка обработчика выбора времени
         val t =
             OnTimeSetListener { view, hourOfDay, minute ->
-                dateAndTime = Calendar.getInstance()
-                dateAndTime[Calendar.HOUR_OF_DAY] = hourOfDay
-                dateAndTime[Calendar.MINUTE] = minute
-                Log.d("MyLog", dateAndTime.time.toString() + "!")
 
-                val am = MyAlarmManager(requireContext())
+
+
                 GlobalScope.launch {
                     var task = tasksViewModel.getTaskById(mId)
                     if (task != null) {
-                        am.onetimeTimer(task.name)
+                        dateAndTime.time=Date(task.date)
                     }
-
+                    dateAndTime[Calendar.HOUR_OF_DAY] = hourOfDay
+                    dateAndTime[Calendar.MINUTE] = minute
+                    dateAndTime[Calendar.SECOND]=0
+                    if (task != null) {
+                        am!!.onetimeTimer(task.name, dateAndTime.time.time)
+                    }
+                    else am!!.onetimeTimer(et_task_name.text.toString(), dateAndTime.time.time)
+                    Log.d("MyLog", dateAndTime.time.toString() + et_task_name)
 
                 }
             }
@@ -148,6 +153,7 @@ class SecondFragment : Fragment(), ActionListener {
         complete.setOnClickListener {
             tasksViewModel.deleteTask(mId)
             tasksViewModel.updateListTasks()
+            //am.c(et_task_name.text.toString(), dateAndTime.time.time)
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
 
         }
@@ -171,7 +177,26 @@ class SecondFragment : Fragment(), ActionListener {
 
         //добавить подзадачу
         add_sub_task.setOnClickListener(View.OnClickListener {
-            subTaskViewModel.insertSubTask(SubTask(name = "", id_task = mId))
+            var nameSubTask:String
+            val mDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
+            val mDialogView = LayoutInflater.from(context).inflate(R.layout.sub_task_add_dialog, null)
+            mDialogBuilder.setView(mDialogView)
+            mDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton(
+                    "Ок"
+                ) { dialog, id -> //Вводим текст и отображаем в строке ввода на основном экране:
+                    val nameSubTask = mDialogView.findViewById<EditText>(R.id.sub_task_text).text.toString()
+
+
+                    subTaskViewModel.insertSubTask(SubTask(name = nameSubTask, id_task = mId))
+                }
+                .setNegativeButton(
+                    "Отмена"
+                ) { dialog, id -> dialog.cancel() }
+            val alertDialog = mDialogBuilder.create()
+            alertDialog.show()
+
             scroll_view.fullScroll(ScrollView.FOCUS_DOWN)
         })
 

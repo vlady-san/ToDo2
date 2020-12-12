@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RadioButton
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.startandroid.todo.extensions.inflate
 import ru.startandroid.todo2.R
@@ -36,7 +37,7 @@ class SubTaskRecyclerAdapter(listener: ActionListener) : RecyclerView.Adapter<Su
     }
     class SubTaskHolder(v: View, listener: ActionListener) : RecyclerView.ViewHolder(v) {
         private var view: View = v
-        private var textOfTask: EditText? = view.findViewById(R.id.et_subtask)
+        private var textOfTask: TextView? = view.findViewById(R.id.et_subtask)
         private var radioButton : RadioButton? = view.findViewById(R.id.rb_subtask)
         private var mListener: ActionListener=listener
 
@@ -46,7 +47,7 @@ class SubTaskRecyclerAdapter(listener: ActionListener) : RecyclerView.Adapter<Su
 
 
         fun bind(subTask: SubTask) {
-            textOfTask?.setText(subTask.name)
+            textOfTask?.text = subTask.name
             radioButton?.setOnClickListener(View.OnClickListener {
                 mListener.onRadioButtonClick(subTask.id!!)
                 radioButton?.isChecked=false

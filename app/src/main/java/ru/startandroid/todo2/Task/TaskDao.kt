@@ -8,6 +8,9 @@ import java.util.*
 @Dao
 interface TaskDao {
 
+    @Update()
+    suspend fun update(task: Task)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(task: Task)
 

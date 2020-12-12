@@ -11,7 +11,7 @@ import java.util.*
 class MyNotification(context: Context) {
 
     private var counter: Int=0
-    private val mContext=context
+    private var mContext=context
     // Идентификатор канала
     private val CHANNEL_ID = MainActivity.CHANNEL_ID
     private var builder: NotificationCompat.Builder?=null
@@ -20,8 +20,8 @@ class MyNotification(context: Context) {
 
 
             builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setSmallIcon(R.drawable.today)
-                .setContentTitle("textTitle")
+                .setSmallIcon(R.drawable.notifications)
+                .setContentTitle("Не забудьте выполнить:")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
     }
     fun notifyMyNotification(text : String){
@@ -29,7 +29,7 @@ class MyNotification(context: Context) {
         with(NotificationManagerCompat.from(mContext)) {
             // notificationId is a unique int for each notification that you must define
             builder?.setContentText(text)
-            builder?.build()?.let { notify(Random().nextInt(), it) }
+            builder?.build()?.let { notify(0, it) }
         }
     }
 
