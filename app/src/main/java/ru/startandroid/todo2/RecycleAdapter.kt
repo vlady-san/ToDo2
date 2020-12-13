@@ -19,7 +19,7 @@ import kotlin.collections.ArrayList
 
 class RecyclerAdapter(listener: ActionListener) : RecyclerView.Adapter<RecyclerAdapter.TaskHolder>()  {
 
-    public var selectItem: Int = -1
+    private var selectItem: Int = -1
     private var tasks: List<Task> = ArrayList()
     private var mlistener: ActionListener=listener
 
@@ -37,20 +37,17 @@ class RecyclerAdapter(listener: ActionListener) : RecyclerView.Adapter<RecyclerA
     }
 
     fun refreshTasks(newTask: List<Task>) {
-        Log.d("MyLog","refresh")
         tasks=newTask
         notifyDataSetChanged()
-
     }
 
     inner class TaskHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
-        //2
+
         private var view: View = v
         private var textOfTask: TextView? = v.findViewById(R.id.task_text)
         private var completeTask: RadioButton = v.findViewById(R.id.complete)
         private var dateOfTask: TextView = v.findViewById(R.id.dateString)
 
-        //3
         init {
            view.setOnClickListener(this)
             completeTask.setOnClickListener {
@@ -60,20 +57,14 @@ class RecyclerAdapter(listener: ActionListener) : RecyclerView.Adapter<RecyclerA
         }
 
         fun bind(task: Task, listener: ActionListener) {
-            textOfTask?.setText(task.name);
+            textOfTask?.text = task.name;
             var cal=DateConverter.fromLongToDate(task.date)
             dateOfTask?.text=DateConverter.fromDateToString(cal)
         }
 
-        //4
         override fun onClick(v: View) {
-            Log.d("MyLog", "id:    "+tasks[layoutPosition].id.toString())
             var bundle = bundleOf("id" to tasks[layoutPosition].id)
             view.findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
-
-
-
-
 
         }
     }}

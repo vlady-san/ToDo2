@@ -41,11 +41,6 @@ class SubTaskRecyclerAdapter(listener: ActionListener) : RecyclerView.Adapter<Su
         private var radioButton : RadioButton? = view.findViewById(R.id.rb_subtask)
         private var mListener: ActionListener=listener
 
-        init {
-
-        }
-
-
         fun bind(subTask: SubTask) {
             textOfTask?.text = subTask.name
             radioButton?.setOnClickListener(View.OnClickListener {

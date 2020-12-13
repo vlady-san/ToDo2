@@ -15,8 +15,8 @@ class SubTaskViewModel(application: Application, idTask: Int) : AndroidViewModel
 
     private var db: TasksDataBase? = null
     private var subTaskDao: SubTaskDao?=null
-    var subTaskList : MutableLiveData<List<SubTask>> = MutableLiveData()
-    val mIdTask:Int=idTask
+    private var subTaskList : MutableLiveData<List<SubTask>> = MutableLiveData()
+    private val mIdTask:Int=idTask
 
     init {
         db = TasksDataBase.getDatabase(application)
@@ -32,7 +32,6 @@ class SubTaskViewModel(application: Application, idTask: Int) : AndroidViewModel
     fun updateListUsers() {
         GlobalScope.launch {
             subTaskList.postValue(subTaskDao?.getByIdUser(mIdTask))
-            System.out.println("кол саб "+mIdTask+" "+ (subTaskDao?.getByIdUser(mIdTask)?.size))
         }
     }
 

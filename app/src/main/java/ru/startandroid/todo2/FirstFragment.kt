@@ -47,9 +47,6 @@ class FirstFragment : Fragment(), ActionListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //сортировка по дате
-
-
         //добавление задачи
         view.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             activity?.let {
@@ -75,10 +72,8 @@ class FirstFragment : Fragment(), ActionListener {
 
         var dateStr=arguments?.getString("date")
         if(dateStr!=null){
-            System.out.println("!!!")
             val dateFormat = SimpleDateFormat("dd/MM/yy")
             val date = dateFormat.parse(dateStr)
-            System.out.println(date.toString())
             val cal = Calendar.getInstance()
             cal.time = date
             getTaskByDate(cal)

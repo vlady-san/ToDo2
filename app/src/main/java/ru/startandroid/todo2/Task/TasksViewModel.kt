@@ -18,12 +18,10 @@ class TasksViewModel(context: Context) : ViewModel() {
     private var taskDao: TaskDao? = null
     var taskList : MutableLiveData<List<Task>> = MutableLiveData()
     init {
-        Log.d("MyLog", "init")
         db = TasksDataBase.getDatabase(context)
         taskDao = db?.taskDao()
         GlobalScope.launch {
         taskList.postValue(taskDao?.getAllTasks())
-            Log.d("MyLog", "load")
         }
     }
     fun getListTasks(): MutableLiveData<List<Task>> {
@@ -78,7 +76,6 @@ class TasksViewModel(context: Context) : ViewModel() {
             taskDao?.deleteById(id)
             println(taskDao?.getAllTasks()?.size.toString())
         }
-        //updateListTasks()
     }
 
     fun getTaskByDate(dateFrom : Calendar){

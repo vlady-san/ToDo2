@@ -51,9 +51,9 @@ class SecondFragment : Fragment(), ActionListener {
         ViewModelProviders.of(this,
             activity?.application?.let { SubTaskViewModelFactory(it, mId)})
             .get(SubTaskViewModel::class.java)}
+
     private var mId: Int = -1
     private var dateAndTime: Calendar = Calendar.getInstance()
-    private var mcontext: Context?=null
     private var am:MyAlarmManager?=null
 
 
@@ -62,7 +62,6 @@ class SecondFragment : Fragment(), ActionListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_second, container, false)
     }
 
@@ -70,13 +69,9 @@ class SecondFragment : Fragment(), ActionListener {
         super.onViewCreated(view, savedInstanceState)
         am= MyAlarmManager(requireContext())
 
-
         // установка обработчика выбора времени
         val t =
             OnTimeSetListener { view, hourOfDay, minute ->
-
-
-
                 GlobalScope.launch {
                     var task = tasksViewModel.getTaskById(mId)
                     if (task != null) {
@@ -89,8 +84,6 @@ class SecondFragment : Fragment(), ActionListener {
                         am!!.onetimeTimer(task.name, dateAndTime.time.time)
                     }
                     else am!!.onetimeTimer(et_task_name.text.toString(), dateAndTime.time.time)
-                    Log.d("MyLog", dateAndTime.time.toString() + et_task_name)
-
                 }
             }
         // установка обработчика выбора даты
@@ -101,7 +94,6 @@ class SecondFragment : Fragment(), ActionListener {
                 dateAndTime[Calendar.DAY_OF_MONTH] = dayOfMonth
                 dateAndTime[Calendar.HOUR_OF_DAY] = 0
                 dateAndTime[Calendar.MINUTE] = 0
-                Log.d("MyLog", dateAndTime.time.time.toString() + "d")
                 tasksViewModel.setDateForTask(dateAndTime, mId)
             }
 
@@ -132,9 +124,10 @@ class SecondFragment : Fragment(), ActionListener {
         val adapter = SubTaskRecyclerAdapter(this)
         sub_task_recyclerView.adapter = adapter
 
-        Log.d("MyLog", "id" + arguments?.getInt("id"))
+
         arguments?.getInt("id")?.let {
             mId = it
+
             GlobalScope.launch {
                 var task = tasksViewModel.getTaskById(mId)
                 if (task != null) {
@@ -148,12 +141,14 @@ class SecondFragment : Fragment(), ActionListener {
                 }
             })
         }
+        if(mId==-1)
+            add_sub_task.visibility=View.GONE
+        else add_sub_task.visibility=View.VISIBLE
 
         //радиобатон для выполнения
         complete.setOnClickListener {
             tasksViewModel.deleteTask(mId)
             tasksViewModel.updateListTasks()
-            //am.c(et_task_name.text.toString(), dateAndTime.time.time)
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
 
         }
@@ -164,8 +159,7 @@ class SecondFragment : Fragment(), ActionListener {
             var task = Task(
                 name = et_task_name.text.toString(),
                 description = et_task_description.text.toString(),
-                date = dateAndTime.time.time,
-                timeRemind = "calendar"
+                date = dateAndTime.time.time
             )
             if (mId == -1)
                 tasksViewModel.insertTask(task)
@@ -177,7 +171,6 @@ class SecondFragment : Fragment(), ActionListener {
 
         //добавить подзадачу
         add_sub_task.setOnClickListener(View.OnClickListener {
-            var nameSubTask:String
             val mDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
             val mDialogView = LayoutInflater.from(context).inflate(R.layout.sub_task_add_dialog, null)
             mDialogBuilder.setView(mDialogView)
@@ -187,8 +180,6 @@ class SecondFragment : Fragment(), ActionListener {
                     "Ок"
                 ) { dialog, id -> //Вводим текст и отображаем в строке ввода на основном экране:
                     val nameSubTask = mDialogView.findViewById<EditText>(R.id.sub_task_text).text.toString()
-
-
                     subTaskViewModel.insertSubTask(SubTask(name = nameSubTask, id_task = mId))
                 }
                 .setNegativeButton(

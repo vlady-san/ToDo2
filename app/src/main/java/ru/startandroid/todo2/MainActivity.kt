@@ -33,9 +33,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val CHANNEL_ID: String = "101"
     }
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -57,52 +54,68 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(
             this, drawer, toolbar, R.string.app_name, R.string.next
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        val navigationView = findViewById(R.id.nav_view) as NavigationView
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
     }
 
-
-
-
-
     private var date = Calendar.getInstance()
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        //var date : Calendar=Calendar.getInstance()
         val id = item.itemId
 
-        if(id == R.id.all_task)
-        {
-            Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_fragment_first_self)
-        }
-        else if (id == R.id.today) {
-            date = Calendar.getInstance()
-            sortedByDateFragment()
-        }
-        else if (id == R.id.tomorrow) {
-            date = Calendar.getInstance()
-            date.add(Calendar.DAY_OF_MONTH,1);
-            sortedByDateFragment()
-        }
-        else if (id == R.id.upcoming) {
-            DatePickerDialog(
-                this, this,
-                date.get(Calendar.YEAR),
-                date.get(Calendar.MONTH),
-                date.get(Calendar.DAY_OF_MONTH)
-            )
-                .show()
+        when(id){
+            R.id.all_task -> Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_fragment_first_self)
+            R.id.today -> {date = Calendar.getInstance()
+                sortedByDateFragment()}
+            R.id.tomorrow ->{
+                date = Calendar.getInstance()
+                date.add(Calendar.DAY_OF_MONTH,1);
+                sortedByDateFragment()
+            }
+            R.id.upcoming -> {
+                DatePickerDialog(
+                    this, this,
+                    date.get(Calendar.YEAR),
+                    date.get(Calendar.MONTH),
+                    date.get(Calendar.DAY_OF_MONTH)
+                )
+                    .show()
+            }
         }
 
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+
+
+//        if(id == R.id.all_task)
+//        {
+//            Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_fragment_first_self)
+//        }
+//        else if (id == R.id.today) {
+//            date = Calendar.getInstance()
+//            sortedByDateFragment()
+//        }
+//        else if (id == R.id.tomorrow) {
+//            date = Calendar.getInstance()
+//            date.add(Calendar.DAY_OF_MONTH,1);
+//            sortedByDateFragment()
+//        }
+//        else if (id == R.id.upcoming) {
+//            DatePickerDialog(
+//                this, this,
+//                date.get(Calendar.YEAR),
+//                date.get(Calendar.MONTH),
+//                date.get(Calendar.DAY_OF_MONTH)
+//            )
+//                .show()
+//        }
+
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
@@ -117,7 +130,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun sortedByDateFragment(){
         var bundle = Bundle()
         val dateFormat = SimpleDateFormat("dd/MM/yy")
-        System.out.println(dateFormat.format(date.time))
         bundle.putString("date",dateFormat.format(date.time))
         Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_fragment_first_self, bundle)
     }
