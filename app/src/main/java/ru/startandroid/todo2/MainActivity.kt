@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.DatePicker
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -26,7 +27,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener{
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    DatePickerDialog.OnDateSetListener{
 
     private var mAppBarConfiguration : AppBarConfiguration? = null
     companion object {
@@ -132,5 +134,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val dateFormat = SimpleDateFormat("dd/MM/yy")
         bundle.putString("date",dateFormat.format(date.time))
         Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_fragment_first_self, bundle)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

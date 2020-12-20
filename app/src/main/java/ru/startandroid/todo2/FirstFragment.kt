@@ -36,6 +36,7 @@ class FirstFragment : Fragment(), ActionListener {
     private lateinit var recyclerAdapter: RecyclerAdapter
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -91,5 +92,9 @@ class FirstFragment : Fragment(), ActionListener {
 
     private fun getTaskByDate(dateFrom: Calendar){
         taskViewModel.getTaskByDate(dateFrom)
+    }
+    override fun onResume() {
+        super.onResume()
+        taskViewModel.updateListTasks()
     }
 }

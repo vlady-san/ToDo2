@@ -11,17 +11,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ScrollView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_second.*
+import kotlinx.android.synthetic.main.fragment_second.view.*
 import kotlinx.android.synthetic.main.sub_task_add_dialog.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -40,7 +39,8 @@ import java.util.*
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class SecondFragment : Fragment(), ActionListener {
+class SecondFragment : Fragment(), ActionListener, OnTimeSetListener,
+    OnDateSetListener, View.OnClickListener {
 
     private val tasksViewModel by lazy {
         ViewModelProvider(this, TaskViewModelFactory(context)).get(
@@ -69,55 +69,11 @@ class SecondFragment : Fragment(), ActionListener {
         super.onViewCreated(view, savedInstanceState)
         am= MyAlarmManager(requireContext())
 
-        // установка обработчика выбора времени
-        val t =
-            OnTimeSetListener { view, hourOfDay, minute ->
-                GlobalScope.launch {
-                    var task = tasksViewModel.getTaskById(mId)
-                    if (task != null) {
-                        dateAndTime.time=Date(task.date)
-                    }
-                    dateAndTime[Calendar.HOUR_OF_DAY] = hourOfDay
-                    dateAndTime[Calendar.MINUTE] = minute
-                    dateAndTime[Calendar.SECOND]=0
-                    if (task != null) {
-                        am!!.onetimeTimer(task.name, dateAndTime.time.time)
-                    }
-                    else am!!.onetimeTimer(et_task_name.text.toString(), dateAndTime.time.time)
-                }
-            }
-        // установка обработчика выбора даты
-        val d =
-            OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                dateAndTime[Calendar.YEAR] = year
-                dateAndTime[Calendar.MONTH] = monthOfYear
-                dateAndTime[Calendar.DAY_OF_MONTH] = dayOfMonth
-                dateAndTime[Calendar.HOUR_OF_DAY] = 0
-                dateAndTime[Calendar.MINUTE] = 0
-                tasksViewModel.setDateForTask(dateAndTime, mId)
-            }
-
-        //диалог даты
-        view.findViewById<ImageButton>(R.id.date).setOnClickListener(View.OnClickListener {
-            context?.let {
-                DatePickerDialog(
-                    it, d,
-                    dateAndTime.get(Calendar.YEAR),
-                    dateAndTime.get(Calendar.MONTH),
-                    dateAndTime.get(Calendar.DAY_OF_MONTH)
-                )
-                    .show()
-            }
-        })
-        //диалог времени
-        view.findViewById<ImageButton>(R.id.time).setOnClickListener(View.OnClickListener {
-            TimePickerDialog(
-                context, t,
-                dateAndTime.get(Calendar.HOUR_OF_DAY),
-                dateAndTime.get(Calendar.MINUTE), true
-            )
-                .show()
-        })
+        date.setOnClickListener(this)
+        time.setOnClickListener(this)
+        complete.setOnClickListener (this)
+        save_task.setOnClickListener(this)
+        add_sub_task.setOnClickListener(this)
 
         var linearLayoutManager = LinearLayoutManager(activity)
         sub_task_recyclerView.layoutManager = linearLayoutManager
@@ -127,7 +83,6 @@ class SecondFragment : Fragment(), ActionListener {
 
         arguments?.getInt("id")?.let {
             mId = it
-
             GlobalScope.launch {
                 var task = tasksViewModel.getTaskById(mId)
                 if (task != null) {
@@ -144,58 +99,110 @@ class SecondFragment : Fragment(), ActionListener {
         if(mId==-1)
             add_sub_task.visibility=View.GONE
         else add_sub_task.visibility=View.VISIBLE
-
-        //радиобатон для выполнения
-        complete.setOnClickListener {
-            tasksViewModel.deleteTask(mId)
-            tasksViewModel.updateListTasks()
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-
-        }
-
-        //сохранить
-        save_task.setOnClickListener(View.OnClickListener {
-
-            var task = Task(
-                name = et_task_name.text.toString(),
-                description = et_task_description.text.toString(),
-                date = dateAndTime.time.time
-            )
-            if (mId == -1)
-                tasksViewModel.insertTask(task)
-            else
-                tasksViewModel.updateNameTask(mId, task)
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-            mId = -1
-        })
-
-        //добавить подзадачу
-        add_sub_task.setOnClickListener(View.OnClickListener {
-            val mDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
-            val mDialogView = LayoutInflater.from(context).inflate(R.layout.sub_task_add_dialog, null)
-            mDialogBuilder.setView(mDialogView)
-            mDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton(
-                    "Ок"
-                ) { dialog, id -> //Вводим текст и отображаем в строке ввода на основном экране:
-                    val nameSubTask = mDialogView.findViewById<EditText>(R.id.sub_task_text).text.toString()
-                    subTaskViewModel.insertSubTask(SubTask(name = nameSubTask, id_task = mId))
-                }
-                .setNegativeButton(
-                    "Отмена"
-                ) { dialog, id -> dialog.cancel() }
-            val alertDialog = mDialogBuilder.create()
-            alertDialog.show()
-
-            scroll_view.fullScroll(ScrollView.FOCUS_DOWN)
-        })
-
-
     }
+
 
     override fun onRadioButtonClick(id: Int) {
         subTaskViewModel.deleteSubTask(id)
         Toast.makeText(activity, "Подзадача завершена", Toast.LENGTH_SHORT).show()
+    }
+
+    //обработка нвыбора времени
+    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        GlobalScope.launch {
+            var task = tasksViewModel.getTaskById(mId)
+            if (task != null) {
+                dateAndTime.time = Date(task.date)
+            }
+            dateAndTime[Calendar.HOUR_OF_DAY] = hourOfDay
+            dateAndTime[Calendar.MINUTE] = minute
+            dateAndTime[Calendar.SECOND] = 0
+            if (task != null) {
+                am!!.onetimeTimer(task.name, dateAndTime.time.time)
+            } else am!!.onetimeTimer(et_task_name.text.toString(), dateAndTime.time.time)
+        }
+    }
+
+    //обработка выбора даты
+    override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        dateAndTime[Calendar.YEAR] = year
+        dateAndTime[Calendar.MONTH] = monthOfYear
+        dateAndTime[Calendar.DAY_OF_MONTH] = dayOfMonth
+        dateAndTime[Calendar.HOUR_OF_DAY] = 0
+        dateAndTime[Calendar.MINUTE] = 0
+        tasksViewModel.setDateForTask(dateAndTime, mId)
+    }
+
+    override fun onClick(view: View?) {
+        if (view != null) {
+            when(view.id){
+                //показ диалога времени
+                R.id.date -> {
+                    context?.let {
+                        DatePickerDialog(
+                            it, this,
+                            dateAndTime.get(Calendar.YEAR),
+                            dateAndTime.get(Calendar.MONTH),
+                            dateAndTime.get(Calendar.DAY_OF_MONTH)
+                        )
+                            .show()
+                    }
+                }
+                //показ диалога времени
+                R.id.time -> {
+                    TimePickerDialog(
+                        context, this,
+                        dateAndTime.get(Calendar.HOUR_OF_DAY),
+                        dateAndTime.get(Calendar.MINUTE), true
+                    )
+                        .show()
+                }
+                //радиокнопка завершения задачи
+                R.id.complete ->{
+                    tasksViewModel.deleteTask(mId)
+                    tasksViewModel.updateListTasks()
+                    findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+
+                }
+                //сохранение задачи
+                R.id.save_task ->{
+
+                    var task = Task(
+                        name = et_task_name.text.toString(),
+                        description = et_task_description.text.toString(),
+                        date = dateAndTime.time.time
+                    )
+                    if (mId == -1)
+                        tasksViewModel.insertTask(task)
+                    else
+                        tasksViewModel.updateNameTask(mId, task)
+                    //findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+                    activity?.onBackPressed()
+
+                    mId = -1
+                }
+                //добавление подзадачи
+                R.id.add_sub_task ->{
+                    val mDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
+                    val mDialogView = LayoutInflater.from(context).inflate(R.layout.sub_task_add_dialog, null)
+                    mDialogBuilder.setView(mDialogView)
+                    mDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton(
+                            "Ок"
+                        ) { dialog, id -> //Вводим текст и отображаем в строке ввода на основном экране:
+                            val nameSubTask = mDialogView.findViewById<EditText>(R.id.sub_task_text).text.toString()
+                            subTaskViewModel.insertSubTask(SubTask(name = nameSubTask, id_task = mId))
+                        }
+                        .setNegativeButton(
+                            "Отмена"
+                        ) { dialog, id -> dialog.cancel() }
+                    val alertDialog = mDialogBuilder.create()
+                    alertDialog.show()
+
+                    scroll_view.fullScroll(ScrollView.FOCUS_DOWN)
+                }
+            }
+        }
     }
 }

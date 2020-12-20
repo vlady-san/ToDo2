@@ -13,7 +13,8 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/fragment_second" />
+            app:destination="@id/fragment_second"
+            app:popUpTo="@id/fragment_first" />
         <action
             android:id="@+id/action_fragment_first_self"
             app:destination="@id/fragment_first" />
