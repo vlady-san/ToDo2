@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.startandroid.todo.Task.Task
@@ -20,7 +22,7 @@ class TasksViewModel(context: Context) : ViewModel() {
     init {
         db = TasksDataBase.getDatabase(context)
         taskDao = db?.taskDao()
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
         taskList.postValue(taskDao?.getAllTasks())
         }
     }
@@ -34,13 +36,13 @@ class TasksViewModel(context: Context) : ViewModel() {
     }
 
     fun updateListTasks() {
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             taskList.postValue(taskDao?.getAllTasks())
         }
     }
 
     fun updateNameTask(id: Int, newTask: Task){
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             var task = taskDao?.getTaskById(id)
             if (task != null) {
                 task.name = newTask.name
@@ -54,7 +56,7 @@ class TasksViewModel(context: Context) : ViewModel() {
     }
 
     fun setDateForTask(date: Calendar, id: Int){
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             var task= taskDao?.getTaskById(id)
             if (task != null) {
                 task.date=date.time.time
@@ -64,7 +66,7 @@ class TasksViewModel(context: Context) : ViewModel() {
     }
 
     fun insertTask(task: Task){
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
         with(taskDao) {
             this?.insert(task)
         }
@@ -72,7 +74,7 @@ class TasksViewModel(context: Context) : ViewModel() {
     }
 
     fun deleteTask(id: Int) {
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             taskDao?.deleteById(id)
             println(taskDao?.getAllTasks()?.size.toString())
         }
@@ -84,7 +86,7 @@ class TasksViewModel(context: Context) : ViewModel() {
         dateTo.add(Calendar.DAY_OF_MONTH,1)
         System.out.println(dateTo.time.toString())
 
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             System.out.println(taskDao?.getByDate(dateFrom.time,dateTo.time)?.size)
             taskList.postValue(taskDao?.getByDate(dateFrom.time,dateTo.time))
 

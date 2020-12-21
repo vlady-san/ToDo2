@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.startandroid.todo.Task.Task
@@ -21,7 +23,7 @@ class SubTaskViewModel(application: Application, idTask: Int) : AndroidViewModel
     init {
         db = TasksDataBase.getDatabase(application)
         subTaskDao = db?.subTaskDao()
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             subTaskList.postValue(subTaskDao?.getByIdUser(idTask))
         }
     }
@@ -30,33 +32,33 @@ class SubTaskViewModel(application: Application, idTask: Int) : AndroidViewModel
 
     //для обновления списка
     fun updateListUsers() {
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             subTaskList.postValue(subTaskDao?.getByIdUser(mIdTask))
         }
     }
 
     fun insertSubTask(subTask: SubTask){
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             subTaskDao?.insert(subTask)
             updateListUsers()
         }
     }
 
     fun updateSubTask(subTask: SubTask){
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             subTaskDao?.update(subTask)
         }
     }
 
     fun deleteSubTask(id: Int){
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             subTaskDao?.delete(id)
             updateListUsers()
         }
     }
 
     fun getSubTaskForTask(idTask: Int){
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             var subTask = subTaskDao?.getByIdUser(idTask)
         }
     }
